@@ -8,3 +8,46 @@
     display: block;
     margin: 0 auto;
 }
+
+/* Reusable retro scoreboard style */
+.scoreboard {
+    display: inline-block;
+    margin: 0 auto 1rem auto;
+    padding: 0.75rem 1rem;
+    background: #1a1a1a;
+    border: 3px dashed #7df9ff;
+    border-radius: 10px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5),
+        0px 0px 20px rgba(255, 238, 0, 0.3);
+    color: #ffee00;
+    font-family: "Press Start 2P", monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0px #ff6b35, 4px 4px 0px #000000, 0px 0px 10px #ffee00;
+}
+
+.scoreboard .label,
+.scoreboard .value {
+    color: #ffee00;
+}
+
+/* Wrapper alignment */
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.game-container {
+    min-height: auto;
+}
+
+@media (max-width: 700px) {
+    .scoreboard {
+        width: 100%;
+        text-align: center;
+    }
+}

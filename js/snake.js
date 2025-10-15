@@ -6,20 +6,31 @@ let board;
 let context;
 
 // snake head
-var snakeX = blockSize * 5;
-var snakeY = blockSize * 5;
+let snakeX = blockSize * 5;
+let snakeY = blockSize * 5;
 
-var velocityX = 0;
-var velocityY = 0;
+let velocityX = 0;
+let velocityY = 0;
+
+// Track last direction for preventing reverse moves
+let lastDirection = "";
 
 // snake body
-var snakeBody = [];
+let snakeBody = [];
 
 // food
-var foodX;
-var foodY;
+let foodX;
+let foodY;
 
-var gameOver = false;
+let gameOver = false;
+
+// score
+let score = 0;
+
+function updateScore() {
+    const el = document.getElementById("score");
+    if (el) el.textContent = String(score);
+}
 
 window.onload = function () {
     board = document.getElementById("snake-canvas");
@@ -29,14 +40,15 @@ window.onload = function () {
 
     placeFood();
     document.addEventListener("keydown", changeDirection);
-    //update();
-    setInterval(update, 1000 / 10); // 10 frames per second
+    setInterval(update, 1000 / 10); // 10 FPS
+    updateScore();
 };
 
 function update() {
     if (gameOver) {
         return;
     }
+
     context.fillStyle = "black";
     context.fillRect(0, 0, board.width, board.height);
 
@@ -45,6 +57,8 @@ function update() {
 
     if (snakeX == foodX && snakeY == foodY) {
         snakeBody.push([foodX, foodY]);
+        score += 1;
+        updateScore();
         placeFood();
     }
 
@@ -56,9 +70,19 @@ function update() {
         snakeBody[0] = [snakeX, snakeY];
     }
 
-    // Now move the head
+    // Moving the head
     snakeX += velocityX * blockSize;
     snakeY += velocityY * blockSize;
+    lastDirection =
+        velocityX === 1
+            ? "Right"
+            : velocityX === -1
+            ? "Left"
+            : velocityY === 1
+            ? "Down"
+            : velocityY === -1
+            ? "Up"
+            : lastDirection;
 
     // game over conditions - check wall collision
     if (
@@ -93,48 +117,58 @@ function update() {
     }
 
     if (gameOver) {
-        setTimeout(() => {
-            if (confirm("Game Over. Restart?")) {
-                resetGame();
-            }
-        }, 100);
+        handleGameOver();
     }
 }
 
-let lastDirection = "Right"; // or null initially
+function handleGameOver() {
+    setTimeout(() => {
+        const restart = confirm(
+            "Game Over!\n\nClick OK to restart.\nClick Cancel to choose another option."
+        );
+        if (restart) {
+            resetGame();
+        } else {
+            const goHome = confirm("Would you like to return to the homepage?");
+            if (goHome) {
+                window.location.href = "index.html";
+            }
+        }
+    }, 100);
+}
 
 function changeDirection(e) {
+    // Prevent arrow keys from scrolling the page
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
+        e.preventDefault();
+    }
+
     switch (e.code) {
         case "ArrowUp":
             if (lastDirection !== "Down") {
                 velocityX = 0;
                 velocityY = -1;
-                lastDirection = "Up";
             }
             break;
         case "ArrowDown":
             if (lastDirection !== "Up") {
                 velocityX = 0;
                 velocityY = 1;
-                lastDirection = "Down";
             }
             break;
         case "ArrowLeft":
             if (lastDirection !== "Right") {
                 velocityX = -1;
                 velocityY = 0;
-                lastDirection = "Left";
             }
             break;
         case "ArrowRight":
             if (lastDirection !== "Left") {
                 velocityX = 1;
                 velocityY = 0;
-                lastDirection = "Right";
             }
             break;
     }
-    e.preventDefault();
 }
 
 function placeFood() {
@@ -151,7 +185,10 @@ function resetGame() {
     snakeY = blockSize * 5;
     velocityX = 0;
     velocityY = 0;
+    lastDirection = "";
     snakeBody = [];
     gameOver = false;
+    score = 0;
+    updateScore();
     placeFood();
 }
