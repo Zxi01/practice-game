@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v 5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <title>Retro Arcade</title>
+</head>
+
+<body>
+
+    <div class="page-container">
+        <h1 class="retro-title">RETRO ARCADE</h1>
+        <main class="games-section">
+            <div class="game-card" onclick="window.location.href=`pacman.html`">
+                <img src="assets/images/pacman.jpg" alt="Pacman Game" class="game-image">
+                <h2>Pacman</h2>
+            </div>
+            <div class="game-card" onclick="window.location.href=`snake.html`">
+                <img src="assets/images/snake.jpg" alt="Snake Game" class="game-image">
+                <h2>Snake</h2>
+            </div>
+            <div class="game-card" onclick="window.location.href=`spaceinvaders.html`">
+                <img src="assets/images/spaceinvaders.jpg" alt="Space Invaders Game" class="game-image">
+                <h2>Space Invaders</h2>
+            </div>
+        </main>
+    </div>
+
+    <!-- Music toggle button -->
+    <button id="music-toggle">
+        <img src="assets/images/pixel-mute.jpg" alt="music icon" class="music-icon">
+        <span class="music-label"></span>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>
