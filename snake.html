@@ -18,16 +18,25 @@
         <div class="game-container">
             <canvas id="snake-canvas"></canvas>
         </div>
+        <a href="index.html" class="back-button">Main Menu</a>
+    </div>
+
+    <div id="game-over-modal" class="modal hidden">
+        <div class="modal-content">
+            <p>Game Over! Your score: <span id="final-score"></span></p>
+            <button id="restart-btn">Restart</button>
+            <button id="home-btn">Homepage</button>
+        </div>
     </div>
 
     <!-- Music toggle button -->
-    <button id="music-toggle">
+    <button id="music-toggle" aria-label="Toggle background music">
         <img src="assets/images/pixel-mute.jpg" alt="music icon" class="music-icon">
         <span class="music-label"></span>
     </button>
 
-    <script src="js/script.js"></script>
-    <script src="js/snake.js"></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/snake.js" defer></script>
 </body>
 
 </html>

@@ -1,13 +1,20 @@
-// board
-const blockSize = 20;
-const rows = 30;
-const cols = 30;
+// Game configuration
+const GAME_CONFIG = {
+    blockSize: 20,
+    rows: 30,
+    cols: 30,
+    fps: 10,
+    startX: 5,
+    startY: 5,
+};
+
+// Board
 let board;
 let context;
 
-// snake head
-let snakeX = blockSize * 5;
-let snakeY = blockSize * 5;
+// Snake head
+let snakeX = GAME_CONFIG.blockSize * GAME_CONFIG.startX;
+let snakeY = GAME_CONFIG.blockSize * GAME_CONFIG.startY;
 
 let velocityX = 0;
 let velocityY = 0;
@@ -23,6 +30,7 @@ let foodX;
 let foodY;
 
 let gameOver = false;
+let gameOverHandled = false;
 
 // score
 let score = 0;
@@ -32,30 +40,61 @@ function updateScore() {
     if (el) el.textContent = String(score);
 }
 
+// Drawing functions
+function drawBoard() {
+    context.fillStyle = "black";
+    context.fillRect(0, 0, board.width, board.height);
+}
+
+function drawFood() {
+    context.fillStyle = "red";
+    context.fillRect(
+        foodX,
+        foodY,
+        GAME_CONFIG.blockSize,
+        GAME_CONFIG.blockSize
+    );
+}
+
+function drawSnake() {
+    context.fillStyle = "lime";
+    context.fillRect(
+        snakeX,
+        snakeY,
+        GAME_CONFIG.blockSize,
+        GAME_CONFIG.blockSize
+    );
+    snakeBody.forEach(([x, y]) => {
+        context.fillRect(x, y, GAME_CONFIG.blockSize, GAME_CONFIG.blockSize);
+    });
+}
+
 window.onload = function () {
     board = document.getElementById("snake-canvas");
-    board.height = rows * blockSize;
-    board.width = cols * blockSize;
-    context = board.getContext("2d"); // used for drawing on the board
+    board.height = GAME_CONFIG.rows * GAME_CONFIG.blockSize;
+    board.width = GAME_CONFIG.cols * GAME_CONFIG.blockSize;
+    context = board.getContext("2d");
 
     placeFood();
     document.addEventListener("keydown", changeDirection);
-    setInterval(update, 1000 / 10); // 10 FPS
+    setInterval(update, 1000 / GAME_CONFIG.fps);
     updateScore();
 };
 
 function update() {
     if (gameOver) {
+        if (!gameOverHandled) {
+            gameOverHandled = true;
+            handleGameOver();
+        }
         return;
     }
 
-    context.fillStyle = "black";
-    context.fillRect(0, 0, board.width, board.height);
+    drawBoard();
+    drawFood();
 
-    context.fillStyle = "red";
-    context.fillRect(foodX, foodY, blockSize, blockSize);
-
-    if (snakeX == foodX && snakeY == foodY) {
+    // Check if snake ate food
+    if (snakeX === foodX && snakeY === foodY) {
         snakeBody.push([foodX, foodY]);
         score += 1;
         updateScore();
@@ -70,102 +109,87 @@ function update() {
         snakeBody[0] = [snakeX, snakeY];
     }
 
-    // Moving the head
-    snakeX += velocityX * blockSize;
-    snakeY += velocityY * blockSize;
-    lastDirection =
-        velocityX === 1
-            ? "Right"
-            : velocityX === -1
-            ? "Left"
-            : velocityY === 1
-            ? "Down"
-            : velocityY === -1
-            ? "Up"
-            : lastDirection;
+    // Move the snake head
+    snakeX += velocityX * GAME_CONFIG.blockSize;
+    snakeY += velocityY * GAME_CONFIG.blockSize;
 
-    // game over conditions - check wall collision
+    // Check for wall collision
     if (
         snakeX < 0 ||
-        snakeX >= cols * blockSize ||
+        snakeX >= GAME_CONFIG.cols * GAME_CONFIG.blockSize ||
         snakeY < 0 ||
-        snakeY >= rows * blockSize
+        snakeY >= GAME_CONFIG.rows * GAME_CONFIG.blockSize
     ) {
         gameOver = true;
     }
 
     // Check for self-collision
-    for (let i = 0; i < snakeBody.length; i++) {
-        if (snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]) {
-            gameOver = true;
-        }
+    if (snakeBody.some(([x, y]) => x === snakeX && y === snakeY)) {
+        gameOver = true;
     }
 
-    // Don't draw if game is over
+    // Draw the snake if game is still active
     if (!gameOver) {
-        // Draw the snake
-        context.fillStyle = "lime";
-        context.fillRect(snakeX, snakeY, blockSize, blockSize);
-        for (let i = 0; i < snakeBody.length; i++) {
-            context.fillRect(
-                snakeBody[i][0],
-                snakeBody[i][1],
-                blockSize,
-                blockSize
-            );
-        }
-    }
-
-    if (gameOver) {
-        handleGameOver();
+        drawSnake();
     }
 }
 
 function handleGameOver() {
-    setTimeout(() => {
-        const restart = confirm(
-            "Game Over!\n\nClick OK to restart.\nClick Cancel to choose another option."
-        );
-        if (restart) {
-            resetGame();
-        } else {
-            const goHome = confirm("Would you like to return to the homepage?");
-            if (goHome) {
-                window.location.href = "index.html";
-            }
-        }
-    }, 100);
+    const modal = document.getElementById("game-over-modal");
+    const scoreEl = document.getElementById("final-score");
+    scoreEl.textContent = score;
+    modal.classList.remove("hidden");
+
+    document.getElementById("restart-btn").onclick = () => {
+        modal.classList.add("hidden");
+        resetGame();
+    };
+
+    document.getElementById("home-btn").onclick = () => {
+        window.location.href = "index.html"; // update path if needed
+    };
 }
 
 function changeDirection(e) {
     // Prevent arrow keys from scrolling the page
-    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
+    const arrowKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+    const wasdKeys = ["KeyW", "KeyA", "KeyS", "KeyD"];
+
+    if ([...arrowKeys, ...wasdKeys].includes(e.code)) {
         e.preventDefault();
     }
 
     switch (e.code) {
         case "ArrowUp":
+        case "KeyW":
             if (lastDirection !== "Down") {
                 velocityX = 0;
                 velocityY = -1;
+                lastDirection = "Up";
             }
             break;
         case "ArrowDown":
+        case "KeyS":
             if (lastDirection !== "Up") {
                 velocityX = 0;
                 velocityY = 1;
+                lastDirection = "Down";
             }
             break;
         case "ArrowLeft":
+        case "KeyA":
             if (lastDirection !== "Right") {
                 velocityX = -1;
                 velocityY = 0;
+                lastDirection = "Left";
             }
             break;
         case "ArrowRight":
+        case "KeyD":
             if (lastDirection !== "Left") {
                 velocityX = 1;
                 velocityY = 0;
+                lastDirection = "Right";
             }
             break;
     }
@@ -174,20 +198,25 @@ function changeDirection(e) {
 function placeFood() {
     let valid = false;
     while (!valid) {
-        foodX = Math.floor(Math.random() * cols) * blockSize;
-        foodY = Math.floor(Math.random() * rows) * blockSize;
+        foodX =
+            Math.floor(Math.random() * GAME_CONFIG.cols) *
+            GAME_CONFIG.blockSize;
+        foodY =
+            Math.floor(Math.random() * GAME_CONFIG.rows) *
+            GAME_CONFIG.blockSize;
         valid = !snakeBody.some(([x, y]) => x === foodX && y === foodY);
     }
 }
 
 function resetGame() {
-    snakeX = blockSize * 5;
-    snakeY = blockSize * 5;
+    snakeX = GAME_CONFIG.blockSize * GAME_CONFIG.startX;
+    snakeY = GAME_CONFIG.blockSize * GAME_CONFIG.startY;
     velocityX = 0;
     velocityY = 0;
     lastDirection = "";
     snakeBody = [];
     gameOver = false;
+    gameOverHandled = false;
     score = 0;
     updateScore();
     placeFood();
