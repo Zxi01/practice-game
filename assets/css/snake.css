@@ -29,6 +29,7 @@
     text-decoration: none;
 }
 
+/* Main Menu button */
 .back-button {
     display: inline-block;
     margin: 3rem auto 1rem auto;
@@ -72,6 +73,7 @@
     min-height: auto;
 }
 
+/* Game Over Modal */
 .modal {
     position: fixed;
     top: 0;
@@ -111,7 +113,7 @@
     color: #ff6b35;
     transform: translateY(-2px);
 }
-
+/* Hides the dpad buttons for computers  */
 .hidden {
     display: none;
 }
