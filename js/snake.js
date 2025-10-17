@@ -78,15 +78,19 @@ window.onload = function () {
     placeFood();
     document.addEventListener("keydown", changeDirection);
 
-    // D-pad button event listeners to ensure the buttons are found after DOM loads
-    document.getElementById("dpad-up");
-    addEventListener("click", () => setDirection("Up"));
-    document.getElementById("dpad-down");
-    addEventListener("click", () => setDirection("Down"));
-    document.getElementById("dpad-left");
-    addEventListener("click", () => setDirection("Left"));
-    document.getElementById("dpad-right");
-    addEventListener("click", () => setDirection("Right"));
+    // D-pad button event listeners
+    document
+        .getElementById("dpad-up")
+        .addEventListener("click", () => setDirection("Up"));
+    document
+        .getElementById("dpad-down")
+        .addEventListener("click", () => setDirection("Down"));
+    document
+        .getElementById("dpad-left")
+        .addEventListener("click", () => setDirection("Left"));
+    document
+        .getElementById("dpad-right")
+        .addEventListener("click", () => setDirection("Right"));
 
     setInterval(update, 1000 / GAME_CONFIG.fps);
     updateScore();
