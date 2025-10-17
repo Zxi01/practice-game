@@ -77,6 +77,21 @@ window.onload = function () {
 
     placeFood();
     document.addEventListener("keydown", changeDirection);
+
+    // D-pad button event listeners to ensure the buttons are found after DOM loads
+    document
+        .getElementById("dpad-up")
+        ?.addEventListener("click", () => setDirection("Up"));
+    document
+        .getElementById("dpad-down")
+        ?.addEventListener("click", () => setDirection("Down"));
+    document
+        .getElementById("dpad-left")
+        ?.addEventListener("click", () => setDirection("Left"));
+    document
+        .getElementById("dpad-right")
+        ?.addEventListener("click", () => setDirection("Right"));
+
     setInterval(update, 1000 / GAME_CONFIG.fps);
     updateScore();
 };
@@ -146,15 +161,49 @@ function handleGameOver() {
     };
 
     document.getElementById("home-btn").onclick = () => {
-        window.location.href = "index.html"; // update path if needed
+        window.location.href = "index.html";
     };
+}
+
+// dpad and keyboard controls
+// Helper function to set direction with reverse prevention
+function setDirection(direction) {
+    switch (direction) {
+        case "Up":
+            if (lastDirection !== "Down") {
+                velocityX = 0;
+                velocityY = -1;
+                lastDirection = "Up";
+            }
+            break;
+        case "Down":
+            if (lastDirection !== "Up") {
+                velocityX = 0;
+                velocityY = 1;
+                lastDirection = "Down";
+            }
+            break;
+        case "Left":
+            if (lastDirection !== "Right") {
+                velocityX = -1;
+                velocityY = 0;
+                lastDirection = "Left";
+            }
+            break;
+        case "Right":
+            if (lastDirection !== "Left") {
+                velocityX = 1;
+                velocityY = 0;
+                lastDirection = "Right";
+            }
+            break;
+    }
 }
 
 function changeDirection(e) {
     // Prevent arrow keys from scrolling the page
     const arrowKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
     const wasdKeys = ["KeyW", "KeyA", "KeyS", "KeyD"];
-
     if ([...arrowKeys, ...wasdKeys].includes(e.code)) {
         e.preventDefault();
     }
@@ -162,35 +211,19 @@ function changeDirection(e) {
     switch (e.code) {
         case "ArrowUp":
         case "KeyW":
-            if (lastDirection !== "Down") {
-                velocityX = 0;
-                velocityY = -1;
-                lastDirection = "Up";
-            }
+            setDirection("Up");
             break;
         case "ArrowDown":
         case "KeyS":
-            if (lastDirection !== "Up") {
-                velocityX = 0;
-                velocityY = 1;
-                lastDirection = "Down";
-            }
+            setDirection("Down");
             break;
         case "ArrowLeft":
         case "KeyA":
-            if (lastDirection !== "Right") {
-                velocityX = -1;
-                velocityY = 0;
-                lastDirection = "Left";
-            }
+            setDirection("Left");
             break;
         case "ArrowRight":
         case "KeyD":
-            if (lastDirection !== "Left") {
-                velocityX = 1;
-                velocityY = 0;
-                lastDirection = "Right";
-            }
+            setDirection("Right");
             break;
     }
 }

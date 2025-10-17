@@ -12,10 +12,26 @@
 }
 
 /* Reusable retro scoreboard style */
-.scoreboard,
-.back-button {
+.scoreboard {
     display: inline-block;
     margin: 0 auto 1rem auto;
+    padding: 0.75rem 1rem;
+    background: #1a1a1a;
+    border: 3px dashed #7df9ff;
+    border-radius: 10px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5),
+        0px 0px 20px rgba(255, 238, 0, 0.3);
+    color: #ffee00;
+    font-family: "Press Start 2P", monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0px #ff6b35, 4px 4px 0px #000000, 0px 0px 10px #ffee00;
+    text-decoration: none;
+}
+
+.back-button {
+    display: inline-block;
+    margin: 3rem auto 1rem auto;
     padding: 0.75rem 1rem;
     background: #1a1a1a;
     border: 3px dashed #7df9ff;
@@ -108,5 +124,55 @@
     .scoreboard {
         width: 50%;
         text-align: center;
+    }
+}
+
+/* D-pad layout and visibility */
+.dpad-container {
+    display: none; /* Hidden by default on desktop */
+}
+
+/* Show D-pad only on tablet/mobile */
+@media screen and (max-width: 1024px) {
+    .dpad-container {
+        display: grid;
+        grid-template-areas:
+            ". up ."
+            "left . right"
+            ". down .";
+        gap: 0.5rem;
+        margin: -2rem 0;
+    }
+
+    .dpad-container button {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+        background-color: #1a1a1a;
+        color: #ffee00;
+        border: 2px solid #7df9ff;
+        border-radius: 8px;
+        font-family: "Press Start 2P", monospace;
+        box-shadow: 0px 4px 12px rgba(0, 255, 255, 0.3);
+        touch-action: manipulation;
+        cursor: pointer;
+    }
+
+    #dpad-up {
+        grid-area: up;
+    }
+    #dpad-down {
+        grid-area: down;
+    }
+    #dpad-left {
+        grid-area: left;
+    }
+    #dpad-right {
+        grid-area: right;
+    }
+
+    .dpad-active {
+        transform: scale(0.95);
+        box-shadow: 0px 0px 8px #ff6b35;
     }
 }

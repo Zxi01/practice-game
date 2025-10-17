@@ -73,7 +73,6 @@ body {
     min-height: 360px;
     transition: transform 0.3s;
     cursor: pointer;
-    color: #a786df;
 }
 
 .game-card h2 {
